@@ -1,0 +1,43 @@
+---
+    - name: Download Kafka
+      get_url:
+        url: "{{ kafka_download_url }}"
+        dest: "/tmp/kafka_{{ kafka_version }}.tgz"
+
+    - name: Create Kafka installation directory
+      file:
+        path: "{{ kafka_home }}"
+        state: directory
+        mode: '0755'
+
+    - name: Extract Kafka
+      unarchive:
+        src: "/tmp/kafka_{{ kafka_version }}.tgz"
+        dest: "/usr/local"
+        remote_src: yes
+
+    - name: Create Kafka data directory
+      file:
+        path: "{{ kafka_data_dir }}"
+        state: directory
+        mode: '0755'
+
+    - name: Check extracted Kafka directory
+      command: ls /usr/local
+
+    - name: Rename Kafka directory if it exists
+      command:
+        cmd: mv /usr/local/kafka /usr/local/kafka_old
+      ignore_errors: yes  
+
+    - name: Rename Kafka directory
+      command: mv /usr/local/{{ kafka_output }} /usr/local/kafka
+
+    - name: Configure Kafka server.properties
+      template:
+        src: kafka_server.properties.j2
+        dest: "{{ kafka_home }}/config/server.properties"
+        mode: '0644'
+      notify: start kafka
+
+

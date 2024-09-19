@@ -1,0 +1,9 @@
+# Kafka server properties
+
+{% for broker in kafka_brokers %}
+broker.id={{ broker.id }}
+listeners=PLAINTEXT://{{ hostvars[broker.hostname].ansible_host }}:9092
+log.dirs={{ kafka_data_dir }}
+num.partitions=1
+zookeeper.connect={{ zookeeper_connect }}
+{% endfor %}
