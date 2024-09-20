@@ -6,7 +6,7 @@ kafka_data_dir: "/var/lib/kafka"
 zookeeper_connect: "192.168.1.94:2181"
 kafka_output: "kafka_2.13-{{ kafka_version }}"
 kafka_brokers:
-  - { id: 0, hostname: 'broker1' }
-  - { id: 1, hostname: 'broker2' }
-  - { id: 2, hostname: 'broker3' }
+    - { id: 1, hostname: broker1 }
+    - { id: 2, hostname: broker2 }
+    - { id: 3, hostname: broker3 }
 

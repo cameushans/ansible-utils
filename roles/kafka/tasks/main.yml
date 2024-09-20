@@ -25,10 +25,10 @@
     - name: Check extracted Kafka directory
       command: ls /usr/local
 
-    - name: Rename Kafka directory if it exists
-      command:
-        cmd: mv /usr/local/kafka /usr/local/kafka_old
-      ignore_errors: yes  
+    - name: Remove existing Kafka directory
+      file:
+        path: /usr/local/kafka
+        state: absent
 
     - name: Rename Kafka directory
       command: mv /usr/local/{{ kafka_output }} /usr/local/kafka
@@ -38,6 +38,13 @@
         src: kafka_server.properties.j2
         dest: "{{ kafka_home }}/config/server.properties"
         mode: '0644'
+      loop: "{{ kafka_brokers }}"
+      when: inventory_hostname == item.hostname
       notify: start kafka
 
+    - name: Remove existing kafka data to avoid conflict
+      command: sudo rm -r /var/lib/kafka/
+
+    - name: Lauch kafka daemon
+      command:  sudo ./kafka-server-start.sh --daemon ../config/server.properties
 
